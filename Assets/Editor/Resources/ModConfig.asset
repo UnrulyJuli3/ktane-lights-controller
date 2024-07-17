@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 615501dbe4f3fe94fbf4b564abb10237, type: 3}
+  m_Name: ModConfig
+  m_EditorClassIdentifier: 
+  id: LightsController
+  title: Light Switch
+  author: UnrulyJuli3
+  description: 'Control the main lights in the gameplay room.
+
+    - Also disables red warning light.
+
+    - Manually turning off the lights for the first time will disable the light flicker
+    pacing event.
+
+
+    Idea by Maelztrom'
+  version: 1.0
+  outputFolder: C:\Program Files (x86)\Steam\steamapps\common\Keep Talking and Nobody
+    Explodes\mods
+  previewImage: {fileID: 2800000, guid: c547d1d79ccbc9f4a8f3f584e129b472, type: 3}

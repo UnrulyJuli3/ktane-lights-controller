@@ -1,0 +1,8 @@
+{
+  "name": "LightsController",
+  "references": [
+    "GameProxies"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": []
+}

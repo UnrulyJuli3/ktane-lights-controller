@@ -1,0 +1,10 @@
+{
+  "name": "LightsController-Editor",
+  "references": [
+    "LightsController"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": []
+}
