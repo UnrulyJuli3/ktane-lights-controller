@@ -14,15 +14,10 @@ MonoBehaviour:
   id: LightsController
   title: Light Switch
   author: UnrulyJuli3
-  description: 'Control the main lights in the gameplay room.
-
-    - Also disables red warning light.
-
-    - Manually turning off the lights for the first time will disable the light flicker
-    pacing event.
-
-
-    Idea by Maelztrom'
+  description: "Control the main lights in the gameplay room.\r\n- Also disables red
+    warning light.\r\n- Manually turning off the lights for the first time will disable
+    the light flicker pacing event.\r\n\r\nIdea by Maelztrom\r\n\r\n[url=https://github.com/UnrulyJuli3/ktane-lights-controller]Source
+    on GitHub[/url]"
   version: 1.0
   outputFolder: C:\Program Files (x86)\Steam\steamapps\common\Keep Talking and Nobody
     Explodes\mods
