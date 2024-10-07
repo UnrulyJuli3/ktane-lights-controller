@@ -1,98 +1,117 @@
 ﻿using System.Linq;
 using Assets.Scripts.Pacing;
+using Events;
 using UnityEngine;
 using static Assets.Scripts.Props.CeilingLight;
 using static KMSoundOverride;
 
 public class LightsController : MonoBehaviour
 {
-	[SerializeField]
-	private KMAudio _audio;
+    [SerializeField]
+    private KMAudio _audio;
 
-	[SerializeField]
-	private KMSelectable _switch;
+    [SerializeField]
+    private KMSelectable _switch;
 
-	[SerializeField]
-	private Animator _switchAnimator;
+    [SerializeField]
+    private Animator _switchAnimator;
 
-	[SerializeField]
-	private KMSelectable _onPunch;
+    [SerializeField]
+    private KMSelectable _onPunch;
 
-	[SerializeField]
-	private KMSelectable _offPunch;
+    [SerializeField]
+    private KMSelectable _offPunch;
 
-	[SerializeField]
-	private GameObject _pacingWarning;
+    [SerializeField]
+    private GameObject _pacingWarning;
 
-	private bool _hasStarted;
+    private bool _hasStarted;
 
-	private bool _isPacingDisabled = false;
+    private bool _isOn;
 
-	private bool _isOn = false;
+    public void Start()
+    {
+        _pacingWarning.SetActive(false);
 
-	public void Start()
-	{
-		_pacingWarning.SetActive(false);
+        _switch.OnInteract += () =>
+        {
+            OnSwitchPressed();
+            return false;
+        };
 
-		_switch.OnInteract += () =>
-		{
-			OnSwitchPressed();
-			return false;
-		};
+        GameplayState.OnLightsOnEvent += OnGameplayLightsOn;
+        EnvironmentEvents.OnLightsOn += OnLightsOn;
+        EnvironmentEvents.OnLightsOff += OnLightsOff;
+    }
 
-		GameplayState.OnLightsOnEvent += () => _hasStarted = true;
-	}
+    private void OnDestroy()
+    {
+        GameplayState.OnLightsOnEvent -= OnGameplayLightsOn;
+        EnvironmentEvents.OnLightsOn -= OnLightsOn;
+        EnvironmentEvents.OnLightsOff -= OnLightsOff;
+    }
 
-	private void Update()
-	{
-		bool on = SceneManager.Instance.GameplayState?.Room?.CeilingLight?.currentState == LightState.On;
-		if (on == _isOn)
-			return;
+    private void OnGameplayLightsOn()
+    {
+        Debug.Log("[Light Switch] Round started");
+        _hasStarted = true;
+    }
 
-		_isOn = on;
-		_switchAnimator.SetBool("IsOn", on);
-	}
-	
-	private void OnSwitchPressed()
-	{
+    private void OnLightsOn(bool _)
+    {
+        Debug.Log("[Light Switch] Lights have been turned on");
+        _isOn = true;
+        UpdateSwitch();
+    }
+
+    private void OnLightsOff(bool _)
+    {
+        Debug.Log("[Light Switch] Lights have been turned off");
+        _isOn = false;
+        UpdateSwitch();
+    }
+
+    private void OnSwitchPressed()
+    {
         if (!_hasStarted)
             return;
 
-		var gameplay = SceneManager.Instance.GameplayState;
+        var gameplay = SceneManager.Instance.GameplayState;
 
-		var paceMaker = gameplay.paceMaker;
+        var paceMaker = gameplay.paceMaker;
 
-		var room = gameplay.Room;
+        var room = gameplay.Room;
         var light = room.CeilingLight;
 
-		if (_isPacingDisabled && room is FacilityRoom)
-		{
-			// cancel pacing event
-			// warning: find better solution?
-			// if modded gameplay rooms use coroutines then those can get stopped too
-			room.StopAllCoroutines();
-		}
+        if (room is FacilityRoom)
+        {
+            // cancel pacing event
+            // warning: find better solution?
+            // because if modded gameplay rooms use coroutines then those can get stopped too
+            room.StopAllCoroutines();
+        }
 
-		switch (light.currentState)
-		{
-			case LightState.On:
-				_offPunch.AddInteractionPunch();
-				_audio.PlayGameSoundAtTransform(SoundEffect.Switch, _switch.transform);
-                _audio.PlayGameSoundAtTransform(SoundEffect.LightBuzzShort, light.transform);
-                light.TurnOff(false);
-				var pacingAction = paceMaker.actions.FirstOrDefault(action => action.EventType == PaceEvent.Idle_DoingWell);
-                if (pacingAction != null)
-					paceMaker.actions.Remove(pacingAction);
-					_pacingWarning.SetActive(true);
-					_isPacingDisabled = true;
-                break;
-            case LightState.Off:
-			case LightState.Buzz:
-				_onPunch.AddInteractionPunch();
-                _audio.PlayGameSoundAtTransform(SoundEffect.Switch, _switch.transform);
-                _audio.PlayGameSoundAtTransform(SoundEffect.LightBuzzShort, light.transform);
-                light.TurnOn(true);
-                break;
+        if (_isOn)
+        {
+            Debug.Log("[Light Switch] Turning lights off");
+            _offPunch.AddInteractionPunch();
+            _audio.PlayGameSoundAtTransform(SoundEffect.Switch, _switch.transform);
+            _audio.PlayGameSoundAtTransform(SoundEffect.LightBuzzShort, light.transform);
+            light.TurnOff(false);
+            var pacingAction = paceMaker.actions.FirstOrDefault(action => action.EventType == PaceEvent.Idle_DoingWell);
+            if (pacingAction != null)
+                paceMaker.actions.Remove(pacingAction);
+            _pacingWarning.SetActive(true);
+        }
+        else
+        {
+            Debug.Log("[Light Switch] Turning lights on");
+            _onPunch.AddInteractionPunch();
+            _audio.PlayGameSoundAtTransform(SoundEffect.Switch, _switch.transform);
+            _audio.PlayGameSoundAtTransform(SoundEffect.LightBuzzShort, light.transform);
+            light.TurnOn(true);
         }
     }
+
+    private void UpdateSwitch() => _switchAnimator.SetBool("IsOn", _isOn);
 }

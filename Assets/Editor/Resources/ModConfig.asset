@@ -18,7 +18,7 @@ MonoBehaviour:
     warning light.\r\n- Manually turning off the lights for the first time will disable
     the light flicker pacing event.\r\n\r\nIdea by Maelztrom\r\n\r\n[url=https://github.com/UnrulyJuli3/ktane-lights-controller]Source
     on GitHub[/url]"
-  version: 1.0
+  version: 1.2
   outputFolder: C:\Program Files (x86)\Steam\steamapps\common\Keep Talking and Nobody
     Explodes\mods
   previewImage: {fileID: 2800000, guid: c547d1d79ccbc9f4a8f3f584e129b472, type: 3}
